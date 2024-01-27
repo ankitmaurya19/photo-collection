@@ -8,7 +8,11 @@ require('dotenv').config();
 
 const app = express();
 app.use(bodyParser.json()); 
+app.use(cors());
+
 app.use(bodyParser.urlencoded({extended : true}));
+
+
 let url = process.env.DATABASE;
 mongoose.connect(url).then(function() {
     console.log("database connected");

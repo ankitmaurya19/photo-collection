@@ -20,6 +20,7 @@ const userSchema = mongoose.Schema({
         {
             data : Buffer,
             contentType : String,
+            name : String,
             description : String
         }
     ]

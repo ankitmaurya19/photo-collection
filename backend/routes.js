@@ -1,5 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const path = require('path');
+const upload = multer({dest : 'uploads'});
+
 const {validateEmail , validatePassword} = require('./middleware.js');
 
 const User = require('./model.js');
@@ -68,10 +72,60 @@ const login = async (req , res) => {
     }
 }
 
+const fileUpload = async (req , res) => {
+    
+    let email = req.headers.auth
+    // let email = req.query.auth;
+    const newImage = {
+        name : req.file.originalname,
+        data : req.file.path,
+        description : req.body.desc,
+        date : Date()
+    }
+    await User.findOne({email})
+    .then((_user) => {
+        _user.photos.push(newImage);
+        _user.save();
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+
+    res.send("file recieved");
+}
+
+const viewImages = async (req , res) => {
+
+    // let user = req.headers.auth;
+    let user = req.query.auth;
+    let images = await User.findOne({email : user})
+    .then((_user) => {
+        return _user.photos;
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+    
+    let resFile = [];
+    for(let i in images)
+    {
+        let image = {
+            name : images[i].name,
+            desc : images[i].desc,
+            id : images[i]._id,
+            img : images[i].data.toString()
+        }
+        resFile.push(image);
+        
+    }
+    res.send(resFile);
+}
+
 
 router.post('/register' , validatePassword , validateEmail , register);
 router.post('/login' , validatePassword , validateEmail , login);
-
+router.post('/upload-image' , upload.single('image') , fileUpload);
+router.get('/view-images' , viewImages);
 
 module.exports = router;
 
