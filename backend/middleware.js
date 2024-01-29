@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 const validatePassword = (req , res , next) => {
     const user = req.body;
     let pass = user.password.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,12}$/);
@@ -25,5 +27,30 @@ const validateEmail = (req , res , next) => {
     return ;
 }
 
+const validateToken = (req , res , next) => {
 
-module.exports = {validateEmail , validatePassword};
+    try {
+        let cookies = req.headers.cookie;
+        // console.log(cookies);
+        if(cookies == undefined)
+        {
+            res.status(500).send({Message : "cookie expired"});
+            return ;
+        }
+        let token = cookies.split('=')[1];
+        jwt.verify(token , process.env.JWT_SECRET_KEY , (err , decode) => {
+            if(!err) {
+                req.user = decode.user_Id;
+                console.log({user : decode.user_Id})
+                next();
+            } 
+        })
+    } catch (error) {
+        console.log({"error in token and cookies" : error.message})
+        res.status(500).send({Message : error.message});
+    }
+    
+}
+
+
+module.exports = {validateEmail , validatePassword , validateToken};

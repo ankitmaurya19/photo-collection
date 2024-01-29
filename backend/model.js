@@ -21,7 +21,8 @@ const userSchema = mongoose.Schema({
             data : Buffer,
             contentType : String,
             name : String,
-            description : String
+            description : String,
+            date : Date
         }
     ]
 } , {timestamps : true});
