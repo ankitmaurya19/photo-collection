@@ -3,3 +3,5 @@ backend/.env
 backend/package-lock.json
 backend/uploads
 frontend
+file-upload.html
+index.html

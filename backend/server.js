@@ -23,10 +23,15 @@ const Routes = require('./routes');
 
 app.use('/api' , Routes);
 
+app.set('view engine' , 'ejs');
+app.set('views' , path.resolve(__dirname  , '../frontend'))
+
 app.get('/' , (req , res) => {
-    var filePath = path.resolve(__dirname  , '..');
-    res.status(200).sendFile(filePath + '/frontend/index.html');
+    res.render('login')
+    // var filePath = path.resolve(__dirname  , '..');
+    // res.status(200).sendFile(filePath + '/frontend/index.html');
 })
+
 
 PORT = process.env.PORT;
 
