@@ -1,0 +1,49 @@
+<!-- views/details.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        .details-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .details-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h2>All Details</h2>
+
+    <div class="details-container">
+        <% details.forEach(detail => { %>
+            <div class="details-card">
+                <p><strong>File Name:</strong> <%= detail.name %></p>
+                <p><strong>Description:</strong> <%= detail.description %></p>
+                <p><strong>Upload Date:</strong> <%= detail.uploadDate %></p>
+                <img src="../backend/<%= detail.img%>" alt="../backend/<%= detail.img%> ">
+                <form action="/api/delete-image" method="post">
+                    <input type="hidden" name="itemId" value="<%=detail.id%>">
+                    <input type="submit" value="Delete">
+                </form>
+                <!-- <a href="/api/delete-image" id="<%=detail.id%>" name=""><button>Delete</button></a> -->
+            </div>
+        <% }); %>
+    </div>
+</body>
+</html>

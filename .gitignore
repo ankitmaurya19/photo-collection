@@ -3,4 +3,4 @@ backend/.env
 backend/package-lock.json
 backend/uploads
 test
-frontend
+# frontend

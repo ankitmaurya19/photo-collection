@@ -35,7 +35,7 @@ const register = async (req , res) => {
         let userID = {
             user_Id : registeredUser.email
         }
-        let token = jwt.sign(userID , process.env.JWT_SECRET_KEY , {expiresIn : '3000s'});
+        let token = jwt.sign(userID , process.env.JWT_SECRET_KEY , {expiresIn : '3600000s'});
         
         res.cookie("jwt" , token , {
             expires : new Date(Date.now() + cookieExpirationTime),
@@ -71,7 +71,7 @@ const login = async (req , res) => {
             let userID = {
                 user_Id : dataUser.email
             }
-            let token = jwt.sign(userID , process.env.JWT_SECRET_KEY , {expiresIn : '3000s'});
+            let token = jwt.sign(userID , process.env.JWT_SECRET_KEY , {expiresIn : '3600000s'});
             
             res.cookie("jwt" , token , {
                 expires : new Date(Date.now() + cookieExpirationTime),
@@ -100,13 +100,13 @@ const fileUpload = async (req , res) => {
     const newImage = {
         name : req.file.originalname,
         data : req.file.path,
-        description : req.body.desc,
-        date : Date()
+        description : req.body.description,
+        date : Date().toLocaleTimeString
     }
     await User.findOne({email})
     .then((_user) => {
         _user.photos.push(newImage);
-        console.log(_user);
+        // console.log(_user);
         _user.save();
     })
     .catch((err) => {
@@ -132,13 +132,14 @@ const viewImages = async (req , res) => {
     {
         let image = {
             name : images[i].name,
-            desc : images[i].desc,
+            description : images[i].description,
             id : JSON.stringify(images[i]._id),
-            img : images[i].data.toString()
+            img : images[i].data.toString(),
+            uploadDate : images[i].date
         }
         resFile.push(image);
     }
-    res.render('home' , {images : resFile});
+    res.render('details' , {details : resFile});
 }
 
 const deleteImage = async (req , res) => {
@@ -151,7 +152,8 @@ const deleteImage = async (req , res) => {
         })
         _user.save();
 
-        res.send(_user.photos);
+        // res.send(_user.photos);
+        res.render('details');
     })
 
 }
@@ -169,7 +171,7 @@ router.get('/login' , (req , res) => {
 
 router.post('/upload-image' , upload.single('image') , validateToken , fileUpload);
 router.get('/view-images' , validateToken , viewImages);
-router.delete('/delete-image' , validateToken , deleteImage)
+router.post('/delete-image' , validateToken , deleteImage)
 
 
 module.exports = router;

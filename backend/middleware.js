@@ -41,7 +41,6 @@ const validateToken = (req , res , next) => {
         jwt.verify(token , process.env.JWT_SECRET_KEY , (err , decode) => {
             if(!err) {
                 req.user = decode.user_Id;
-                console.log({user : decode.user_Id})
                 next();
             } 
         })
