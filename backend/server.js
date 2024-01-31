@@ -26,10 +26,13 @@ app.use('/api' , Routes);
 app.set('view engine' , 'ejs');
 app.set('views' , path.resolve(__dirname  , '../frontend'))
 
+
 app.get('/' , (req , res) => {
     res.render('login')
-    // var filePath = path.resolve(__dirname  , '..');
-    // res.status(200).sendFile(filePath + '/frontend/index.html');
+})
+app.get('/uploads/:image' , (req , res) => {
+    let img = req.params.image;
+    res.sendFile(`${__dirname}/uploads/${img}`);
 })
 
 

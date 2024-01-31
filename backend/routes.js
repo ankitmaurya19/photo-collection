@@ -19,7 +19,7 @@ const register = async (req , res) => {
     try {
 
         let existingUser = await User.findOne({email : req.body.email})
-
+        // If User Already exists
         if(existingUser) {
             res.status(501).send({message : "user already exist"});
             return ;
@@ -33,7 +33,7 @@ const register = async (req , res) => {
 
         let registeredUser = await User(userObject).save().then(_user => _user);
         let userID = {
-            user_Id : registeredUser.email
+            user_Id : registeredUser._id
         }
         let token = jwt.sign(userID , process.env.JWT_SECRET_KEY , {expiresIn : '3600000s'});
         
@@ -69,7 +69,7 @@ const login = async (req , res) => {
 
         if(isValidUser) {
             let userID = {
-                user_Id : dataUser.email
+                user_Id : dataUser._id
             }
             let token = jwt.sign(userID , process.env.JWT_SECRET_KEY , {expiresIn : '3600000s'});
             
@@ -96,30 +96,28 @@ const login = async (req , res) => {
 
 const fileUpload = async (req , res) => {
     
-    let email = req.user;
-    const newImage = {
-        name : req.file.originalname,
-        data : req.file.path,
-        description : req.body.description,
-        date : Date().toLocaleTimeString
-    }
-    await User.findOne({email})
-    .then((_user) => {
-        _user.photos.push(newImage);
-        // console.log(_user);
-        _user.save();
-    })
-    .catch((err) => {
-        console.log({"Error in file uploading API ":err});
-    })
+    try {
+        let userID = req.user;
+        // console.log(req.file);
+        const newImage = {
+            name : req.file.originalname,
+            data : req.file.path,
+            description : req.body.description,
+            date : Date()
+        }
+        await User.findByIdAndUpdate(userID , {$push : {photos : newImage}});
 
-    res.send("file recieved");
+        res.redirect('/api/view-images');
+    } catch (error) {
+        console.log({"error while uploading" : error.message});
+    }
+    
 }
 
 const viewImages = async (req , res) => {
     
-    let user = req.user;
-    let images = await User.findOne({email : user})
+    let userID = req.user;
+    let images = await User.findById(userID)
     .then((_user) => {
         return _user.photos;
     })
@@ -139,21 +137,21 @@ const viewImages = async (req , res) => {
         }
         resFile.push(image);
     }
+    
     res.render('details' , {details : resFile});
 }
 
 const deleteImage = async (req , res) => {
-    let user = req.user;
-    let item = req.body.itemId;
-    await User.findOne({email : user})
+    let userID = req.user;
+    let item = req.body.itemId; // 
+    await User.findById(userID)
     .then((_user) => {
         _user.photos = _user.photos.filter((el) => {
             return JSON.stringify(el._id) != item;
         })
         _user.save();
 
-        // res.send(_user.photos);
-        res.render('details');
+        res.redirect('/api/view-images')
     })
 
 }

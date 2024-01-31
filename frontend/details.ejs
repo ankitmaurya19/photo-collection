@@ -8,42 +8,76 @@
     <title>All Details</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 20px;
+    }
 
-        .details-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    h2 {
+        color: #333;
+    }
 
-        .details-card {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin: 10px;
-            text-align: left;
-        }
+    .details-container {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .details-card {
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px;
+        text-align: left;
+        max-width: 400px;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .details-card img {
+        max-width: 100%;
+        height: auto;
+        margin-top: 10px;
+    }
+
+    form {
+        margin-top: 10px;
+    }
+
+    input[type="submit"] {
+        background-color: #dc3545;
+        color: #fff;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #c82333;
+    }
     </style>
 </head>
 <body>
     <h2>All Details</h2>
 
     <div class="details-container">
+        <% if(details.length > 0) { %>
         <% details.forEach(detail => { %>
             <div class="details-card">
+                <img src="/<%= detail.img%>" alt="image is loading">
                 <p><strong>File Name:</strong> <%= detail.name %></p>
                 <p><strong>Description:</strong> <%= detail.description %></p>
                 <p><strong>Upload Date:</strong> <%= detail.uploadDate %></p>
-                <img src="../backend/<%= detail.img%>" alt="../backend/<%= detail.img%> ">
+                
                 <form action="/api/delete-image" method="post">
                     <input type="hidden" name="itemId" value="<%=detail.id%>">
                     <input type="submit" value="Delete">
                 </form>
-                <!-- <a href="/api/delete-image" id="<%=detail.id%>" name=""><button>Delete</button></a> -->
             </div>
         <% }); %>
+        <% } else { %>
+            <p><strong>There is no data to tobe displayed.</strong></p>
+        <% } %>
     </div>
 </body>
 </html>

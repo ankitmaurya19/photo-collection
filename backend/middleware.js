@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const validatePassword = (req , res , next) => {
     const user = req.body;
-    let pass = user.password.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,12}$/);
+    let pass = user.password.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{4,12}$/);
 
     if(!pass) {
         res.status(401).json({ meassge : "password is weak"});
